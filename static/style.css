@@ -1,0 +1,187 @@
+:root { --tamanho-celula: 48px; }
+
+body { font-family: 'Nunito', sans-serif; }
+
+/* ── Labirinto ─────────────────────────────────────────── */
+#labirinto {
+    display: grid;
+    gap: 2px;
+    background-color: #2C3E50;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+/* grid-template-columns é definido pelo script.js */
+}
+
+.celula {
+    width:  var(--tamanho-celula);
+    height: var(--tamanho-celula);
+    background-color: #fffcf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+}
+
+.parede  { 
+    background-color: #2C3E50; 
+    border-radius: 4px; 
+}
+
+.terreno-pesado {
+    background-color: #8B4513; /* Saddle brown for heavy terrain */
+    border-radius: 4px;
+    position: relative;
+}
+
+.terreno-pesado::after {
+    content: "2";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+}
+
+.rato {
+    font-size: 32px;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.queijo {
+    font-size: 32px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    background-image: none;
+    color: inherit;
+}
+
+.visitado {
+    background-color: rgba(52, 152, 219, 0.38);
+    animation: pulse-visited 0.4s ease;
+}
+
+.caminho-final {
+    background-color: #F1C40F;
+    animation: flash-path 0.3s ease;
+    }
+
+        /* Para usar imagens em vez de emojis */
+.celula.rato {
+    background-image: url('assets/rato.png');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent; 
+}
+
+.celula.queijo.cheese-image {
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
+}
+
+@keyframes pulse-visited {
+    0%   { transform: scale(0.85); opacity: 0.5; }
+    100% { transform: scale(1);    opacity: 1;   }
+}
+
+@keyframes flash-path {
+    0%   { transform: scale(0.9); }
+    60%  { transform: scale(1.1); }
+    100% { transform: scale(1);   }
+}
+
+/* ── Select customizado ────────────────────────────────── */
+#metodo {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232C3E50' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 2.5rem;
+}
+
+/* ── Botão pressionável ────────────────────────────────── */
+.btn-game {
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn-game:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+}
+
+/* ── Confetti ─────────────────────────────────────────── */
+.confetti-wrap {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: -16px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    0%   { transform: translateY(0)    rotate(0deg);   opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+
+/* ── Back button ────────────────────────────────────── */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: #fff;
+            background: #E67E22;
+            padding: 12px 28px;
+            border-radius: 999px;
+            box-shadow: 0 4px 0 #C45E1A;
+            transition: filter 0.15s, transform 0.12s, box-shadow 0.12s;
+            text-decoration: none;
+}
+        
+.btn-back:hover  { 
+    filter: brightness(1.08); 
+    transform: translateY(2px); 
+}
+        
+.btn-back:active { 
+    transform: translateY(3px); 
+    box-shadow: 0 1px 0 #C45E1A; 
+}
+
+/* ── Scene card ─────────────────────────────────────── */
+.scene-card {
+    background: linear-gradient(160deg, #FFF8ED 0%, #FFF3E0 100%);
+    border: 2px solid #FDE68A;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    padding: 32px 24px 24px;
+}
+
+/* polka dots background */
+.scene-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #F6C89088 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+    pointer-events: none;
+}

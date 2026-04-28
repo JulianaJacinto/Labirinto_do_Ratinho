@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final - O Ratinho e o Algoritmo</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body class="min-h-[100vh] bg-fundo flex items-center justify-center p-6"
+      style="font-family: 'Nunito', sans-serif;">
+
+    <!-- ── Confetti ─────────────────────────────────────────── -->
+    <div class="confetti-wrap" id="confetti"></div>
+
+    <!-- ── Card principal ───────────────────────────────────── -->
+    <main class="relative z-10 w-full max-w-lg flex flex-col gap-5">
+
+        <!-- Cabeçalho -->
+        <div class="card-appear" style="animation-delay: 0s;">
+            <div class="bg-[#FFB830] rounded-3xl px-8 py-7 text-center relative overflow-hidden ">
+                <!-- polka dots no header -->
+                <div class="absolute inset-0 opacity-20 pointer-events-none"
+                     style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 18px 18px;"></div>
+
+                <div class="relative z-10" id="star-container">
+                    <h1 class="text-white text-5xl drop-shadow-sm" style="font-family: 'Fredoka One', cursive;">
+                        Parabéns! 🎉
+                    </h1>
+                    <p class="text-white/90 text-sm mt-2 font-semibold">
+                        Você encontrou o final secreto do labirinto!
+                        <br />
+                        O ratinho encontrou todos os queijos e pode descansar!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cena SVG ───────────────────────────────────────── -->
+        <div class="card-appear scene-card" style="animation-delay: 0.12s;">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider text-center mb-4 relative z-10">
+                Cena final
+            </p>
+            <div class="flex justify-center relative z-10">
+                <img src="{{ url_for('static', filename='images/maze-final.svg') }}" alt="Cena final do labirinto" class="w-64 cheese-glow">
+            </div>
+        </div>
+
+
+        <!-- Rodapé / botão voltar -->
+        <div class="card-appear text-center" style="animation-delay: 0.32s;">
+            <p class="text-sm text-gray-500 mb-4">
+                Obrigado por explorar os algoritmos de busca!<br>
+                <span class="font-semibold text-amber-700">Tente outro labirinto ou outro algoritmo.</span>
+            </p>
+            <a href="{{ url_for('index') }}" class="btn-back">
+                ← Voltar ao Labirinto
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        /* ── Confetti ─────────────────────────────────────── */
+        const COLORS = ['#F1C40F','#E74C3C','#3498DB','#2ECC71','#E67E22','#9B59B6','#1ABC9C'];
+        const wrap = document.getElementById('confetti');
+
+        function spawnPiece() {
+            const el = document.createElement('div');
+            el.className = 'confetti-piece';
+            const size = 6 + Math.random() * 8;
+            el.style.cssText = `
+                left: ${Math.random() * 100}%;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${COLORS[Math.floor(Math.random() * COLORS.length)]};
+                border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                animation-duration: ${1.8 + Math.random() * 2.2}s;
+                animation-delay: ${Math.random() * 0.8}s;
+            `;
+            wrap.appendChild(el);
+            el.addEventListener('animationend', () => el.remove());
+        }
+
+        /* Burst inicial */
+        for (let i = 0; i < 60; i++) setTimeout(spawnPiece, i * 30);
+
+        /* Gotejamento leve depois */
+        setInterval(() => {
+            if (Math.random() < 0.6) spawnPiece();
+        }, 400);
+
+        /* ── Estrelinhas no header ────────────────────────── */
+        const starEmojis = ['⭐','🌟','✨','💛'];
+        const container = document.getElementById('star-container');
+        [
+            { top: '8px',  left: '-12px', delay: 0.5 },
+            { top: '0px',  right: '-8px', delay: 0.7 },
+            { bottom: '4px', left: '4px', delay: 0.9 },
+        ].forEach(pos => {
+            const s = document.createElement('span');
+            s.className = 'star';
+            s.textContent = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+            Object.assign(s.style, { position: 'absolute', animationDelay: pos.delay + 's', ...pos });
+            container.appendChild(s);
+        });
+
+        /* ── Recupera stats do sessionStorage (se vierem da index) ── */
+        try {
+            const v = sessionStorage.getItem('maze_visitados');
+            const c = sessionStorage.getItem('maze_caminho');
+            const t = sessionStorage.getItem('maze_tempo');
+            const a = sessionStorage.getItem('maze_algo');
+            if (v) document.getElementById('final-visitados').textContent = v;
+            if (c) document.getElementById('final-caminho').textContent = c;
+            if (t) document.getElementById('final-tempo').textContent = t;
+            if (a) document.getElementById('final-algo').textContent = a;
+        } catch(_) {}
+    </script>
+</body>
+</html>

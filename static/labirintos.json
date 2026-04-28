@@ -1,0 +1,312 @@
+[
+  {
+    "id": "open-field",
+    "name": "Campo Aberto",
+    "description": "Sem obstáculos. Todos os algoritmos encontram o caminho facilmente.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": true,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["all-success"]
+  },
+  {
+    "id": "depth-limit-failure",
+    "name": "Profundidade Limitada Falha",
+    "description": "Caminho em serpentina com ~47 passos. O limite fixo de profundidade não alcança o destino, mas BFS, IDDFS e demais encontram.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,1,1,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": false,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": true,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["depth-limit"]
+  },
+  {
+    "id": "greedy-trap",
+    "name": "Armadilha Gulosa",
+    "description": "O caminho correto exige se afastar do objetivo antes de alcançá-lo. Greedy é atraído por um beco sem saída próximo ao destino.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,1,1,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,0,1],
+      [0,0,0,0,0,0,0,0,0,1],
+      [0,1,1,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,1,1,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": false,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["greedy", "heuristic"]
+  },
+  {
+    "id": "bidirectional-challenge",
+    "name": "Desafio Bidirecional",
+    "description": "Corredor único e estreito. As buscas do início e do fim têm dificuldade em se encontrar pelo meio exato, podendo não formar um caminho válido.",
+    "map": [
+      [0,1,1,1,1,1,1,1,1,1],
+      [0,1,0,0,0,0,0,0,0,1],
+      [0,1,0,1,1,1,1,1,0,1],
+      [0,1,0,1,0,0,0,1,0,1],
+      [0,1,0,1,0,1,0,1,0,1],
+      [0,1,0,1,0,1,0,1,0,1],
+      [0,1,0,1,0,0,0,1,0,1],
+      [0,1,0,1,1,1,1,1,0,1],
+      [0,1,0,0,0,0,0,0,0,1],
+      [0,0,0,1,1,1,1,1,1,1]
+    ],
+    "start": [0, 0],
+    "end": [9, 0],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": false,
+      "custo_uniforme": true,
+      "greddy": true,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["bidirectional"]
+  },
+  {
+    "id": "uniform-cost-challenge",
+    "name": "Desafio Custo Uniforme",
+    "description": "Células marcadas com 2 têm custo maior. O caminho mais rápido em passos passa por terreno pesado; custo uniforme evita esse caminho mais longo.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1,1,1,0],
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,1,1,1,1,1],
+      [0,2,2,2,2,2,2,2,2,1],
+      [0,2,1,1,1,1,1,1,2,1],
+      [0,2,1,0,0,0,0,1,2,1],
+      [0,2,1,0,1,1,0,1,2,1],
+      [0,2,2,0,1,0,0,2,2,1],
+      [0,0,0,0,1,0,1,1,0,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": false,
+      "profundidade": false,
+      "prof_limitada": false,
+      "aprof_iterativo": false,
+      "bidirecional": false,
+      "custo_uniforme": true,
+      "greddy": false,
+      "a_estrela": false,
+      "aia_estrela": false
+    },
+    "tags": ["uniform-cost", "weighted"]
+  },
+  {
+    "id": "astar-heuristic-trap",
+    "name": "Armadilha Heurística A*",
+    "description": "Heurística de distância Manhattan superestima o custo real quando há terreno pesado. A* padrão falha; apenas variantes com heurística admissível resolvem de forma ótima.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,0],
+      [0,1,1,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,0,1],
+      [0,0,0,0,0,0,0,1,0,1],
+      [0,1,1,1,1,1,0,1,0,1],
+      [0,1,2,2,2,1,0,1,0,1],
+      [0,1,2,0,2,1,0,1,0,1],
+      [0,1,2,2,2,1,0,0,0,1],
+      [0,0,0,0,0,0,0,1,0,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": false,
+      "a_estrela": false,
+      "aia_estrela": true
+    },
+    "tags": ["astar", "heuristic-trap"]
+  },
+  {
+    "id": "iterative-deepening-challenge",
+    "name": "Desafio Aprofundamento Iterativo",
+    "description": "Múltiplos ramos cegos profundos. DFS se perde facilmente; IDDFS encontra a solução aumentando o limite gradualmente.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,0],
+      [1,0,1,0,1,0,1,0,1,1],
+      [1,0,1,0,1,0,1,0,0,1],
+      [1,0,1,0,1,0,1,1,0,1],
+      [1,0,1,0,1,0,0,1,0,1],
+      [1,0,1,0,1,1,0,1,0,1],
+      [1,0,1,0,0,1,0,1,0,1],
+      [1,0,1,1,0,1,0,1,0,1],
+      [1,0,0,1,0,1,0,1,0,1],
+      [1,1,0,0,0,0,0,0,0,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": false,
+      "prof_limitada": false,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": false,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["iterative-deepening"]
+  },
+  {
+    "id": "complex-maze",
+    "name": "Labirinto Complexo",
+    "description": "Estrutura densa com corredores estreitos e várias bifurcações. Testa robustez e completude de todos os algoritmos.",
+    "map": [
+      [0,0,1,0,0,0,1,0,0,0],
+      [0,1,1,0,1,0,1,0,1,0],
+      [0,0,0,0,1,0,0,0,1,0],
+      [1,1,0,1,1,1,1,0,1,0],
+      [0,0,0,0,0,0,1,0,0,0],
+      [0,1,1,1,1,0,1,1,1,0],
+      [0,0,0,1,0,0,0,0,1,0],
+      [1,1,0,1,0,1,1,0,1,0],
+      [0,0,0,0,0,1,0,0,0,0],
+      [0,1,1,1,0,1,0,1,1,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": false,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["complex"]
+  },
+  {
+    "id": "multiple-solutions",
+    "name": "Múltiplas Soluções",
+    "description": "Grade semi-aberta com vários caminhos válidos. Algoritmos podem retornar caminhos diferentes, mas todos chegam ao destino.",
+    "map": [
+      [0,0,0,0,1,0,0,0,0,0],
+      [0,1,1,0,1,0,1,1,1,0],
+      [0,1,0,0,0,0,0,0,1,0],
+      [0,1,0,1,1,1,1,0,1,0],
+      [0,0,0,1,0,0,1,0,0,0],
+      [1,1,0,1,0,1,1,0,1,1],
+      [0,0,0,0,0,1,0,0,0,0],
+      [0,1,1,1,0,1,0,1,1,0],
+      [0,0,0,1,0,0,0,1,0,0],
+      [0,1,0,0,0,1,0,0,0,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": true,
+      "profundidade": true,
+      "prof_limitada": true,
+      "aprof_iterativo": true,
+      "bidirecional": true,
+      "custo_uniforme": true,
+      "greddy": true,
+      "a_estrela": true,
+      "aia_estrela": true
+    },
+    "tags": ["multiple-solutions"]
+  },
+  {
+    "id": "no-path",
+    "name": "Sem Caminho",
+    "description": "O destino está completamente isolado por paredes. Todos os algoritmos corretos devem retornar falha.",
+    "map": [
+      [0,0,0,0,0,0,0,0,0,1],
+      [0,1,1,1,1,1,1,1,0,1],
+      [0,1,0,0,0,0,0,1,0,1],
+      [0,1,0,1,1,1,0,1,0,1],
+      [0,1,0,1,0,1,0,1,0,1],
+      [0,1,0,1,1,1,0,1,0,1],
+      [0,1,0,0,0,0,0,1,0,1],
+      [0,1,1,1,1,1,1,1,0,1],
+      [0,0,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1,0]
+    ],
+    "start": [0, 0],
+    "end": [9, 9],
+    "expected": {
+      "amplitude": false,
+      "profundidade": false,
+      "prof_limitada": false,
+      "aprof_iterativo": false,
+      "bidirecional": false,
+      "custo_uniforme": false,
+      "greddy": false,
+      "a_estrela": false,
+      "aia_estrela": false
+    },
+    "tags": ["unreachable"]
+  }
+]

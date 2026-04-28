@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Ratinho e o Algoritmo</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body class="h-screen overflow-hidden bg-fundo flex" style="font-family: 'Nunito', sans-serif;">
+
+    <!-- ── PAINEL ESQUERDO ─────────────────────────────────── -->
+    <aside class="w-80 flex-shrink-0 bg-white flex flex-col border-r-2 border-amber-200 rounded-tr-3xl rounded-br-3xl">
+
+        <!-- Cabeçalho -->
+        <header class="bg-queijo px-6 pt-6 pb-5 flex flex-col items-center gap-3 relative overflow-hidden flex-shrink-0 rounded-tr-3xl">
+            <div class="absolute inset-0 opacity-20 pointer-events-none"
+                 style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 18px 18px;"></div>
+            <div class="z-10 text-center">
+                <h1 class="text-white text-3xl leading-tight drop-shadow" style="font-family: 'Fredoka One', cursive;">
+                    Busca em IA
+                </h1>
+                <p class="text-white/80 text-base mt-0.5">O Labirinto do Queijo</p>
+            </div>
+        </header>
+
+        <!-- Conteúdo com scroll -->
+        <div class="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4 min-h-0">
+
+            <!-- Algoritmo -->
+            <div class="flex flex-col gap-1.5">
+                <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Algoritmo</label>
+                <div class="relative">
+                    <select id="metodo" class="w-full appearance-none bg-orange-50 border-2 border-queijo/70 
+                                        text-parede font-semibold text-sm rounded-xl
+                                        px-4 py-2.5 pr-9 cursor-pointer
+                                        focus:outline-none focus:ring-2 focus:ring-queijo/40">
+                        <option value="amplitude">Amplitude (BFS)</option>
+                        <option value="profundidade">Profundidade (DFS)</option>
+                        <option value="prof_limitada">Prof. Limitada</option>
+                        <option value="aprof_iterativo">Aprofund. Iterativo</option>
+                        <option value="bidirecional">Bidirecional</option>
+                        <option value="custo_uniforme">Custo Uniforme</option>
+                        <option value="greddy">Greedy</option>
+                        <option value="a_estrela">A*</option>
+                        <option value="aia_estrela">AIA*</option>
+                    </select>
+                </div>
+                <p id="algorithm-desc" class="text-xs text-gray-400 italic mb-1">Descrição do algoritmo</p>
+
+                <hr class="border-amber-100">
+
+                <div class="flex flex-col gap-1.5 mt-4">
+                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Preset do Labirinto</label>
+                    <div class="relative">
+                        <select id="preset-select" class="w-full appearance-none bg-orange-50 border-2 border-queijo/70 
+                                            text-parede font-semibold text-sm rounded-xl
+                                            px-4 py-2.5 pr-9 cursor-pointer
+                                            focus:outline-none focus:ring-2 focus:ring-queijo/40">
+                            <option value="">Carregando presets...</option>
+                        </select>
+                        <svg class="w-4 h-4 text-queijo/70 absolute top-1/2 right-3 -translate-y-1/2 pointer-events-none" xmlns="http://www.w3.org/2000/svg"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        </svg>
+                    </div>
+                    <p id="preset-desc" class="text-xs text-gray-400 italic mt-1">Escolha um preset para testar diferentes labirintos.</p>
+                    <p id="preset-expected" class="text-xs text-gray-400 italic mt-1 hidden"></p>
+                </div>
+            </div>
+
+            <hr class="border-amber-100">
+
+            <!-- Pontos de início e fim -->
+            <div class="grid grid-cols-2 gap-2">
+                <!-- Início -->
+                <div class="flex flex-col gap-1">
+                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Início (Rato) 🐭</label>
+                    <div class="flex gap-1">
+                        <button id="btn-set-start" onclick="startSelectionMode('start')"
+                                class="flex-1 py-2 px-2 rounded-lg text-xs font-bold
+                                       bg-blue-100 text-blue-700 hover:bg-blue-200
+                                       transition-all focus:outline-none">
+                            Definir
+                        </button>
+                        <div class="flex-1 bg-fundo rounded-lg flex items-center justify-center">
+                            <span id="pos-start" class="text-xs font-bold text-parede">[0, 0]</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fim -->
+                <div class="flex flex-col gap-1">
+                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Fim (Queijo) 🧀</label>
+                    <div class="flex gap-1">
+                        <button id="btn-set-end" onclick="startSelectionMode('end')"
+                                class="flex-1 py-2 px-2 rounded-lg text-xs font-bold
+                                       bg-amber-100 text-amber-700 hover:bg-amber-200
+                                       transition-all focus:outline-none">
+                            Definir
+                        </button>
+                        <div class="flex-1 bg-fundo rounded-lg flex items-center justify-center">
+                            <span id="pos-end" class="text-xs font-bold text-parede">[9, 9]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 italic -mt-3">
+                Selecione uma casa para iniciar a exploração do labirinto.
+            </p>
+
+            <hr class="border-amber-100">
+
+            <!-- Ações -->
+            <div class="flex flex-col gap-2">
+                <button onclick="solveMaze()"
+                        class="w-full py-3 rounded-xl text-white text-base
+                               bg-laranja shadow-[0_4px_0_#c45e1a]
+                               hover:brightness-105
+                               active:translate-y-1 active:shadow-none
+                               transition-all focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        style="font-family: 'Fredoka One', cursive;">
+                    Ache o Queijo!
+                </button>
+                <button onclick="clearMazeVisualization()"
+                        class="w-full py-2.5 rounded-xl text-sm font-bold
+                               text-gray-500 bg-white border-2 border-gray-200
+                               hover:bg-gray-50 active:translate-y-px
+                               transition-all focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Limpar
+                </button>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <footer class="flex-shrink-0 px-5 py-3 border-t border-amber-100 flex justify-between items-center">
+            <span class="text-xs text-gray-500 font-semibold">v1.0</span>
+            <button id="toggle-final" onclick="toggleFinal()" title="Cena final"
+                    class="icon-btn w-8 h-8 rounded-lg bg-amber-100 hover:bg-amber-200 text-base
+                                flex items-center justify-center transition-colors
+                                focus:outline-none focus:ring-2 focus:ring-queijo">⭐</button>
+        </footer>
+    </aside>
+
+    <!-- ── LABIRINTO (centro) ───────────────────────────────── -->
+    <main class="flex-1 min-w-0 flex items-center justify-center overflow-auto bg-fundo p-5">
+        <div id="labirinto"></div>
+    </main>
+
+    <!-- ── PAINEL DIREITO ──────────────────────────────────── -->
+    <aside class="w-80 flex-shrink-0 bg-white flex flex-col border-l-2 border-amber-200 rounded-tl-3xl rounded-bl-3xl">
+
+        <!-- Conteúdo com scroll -->
+        <div class="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5 min-h-0">
+
+            <!-- Legenda -->
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Legenda</label>
+                <ul class="flex flex-col gap-2 text-sm text-gray-600 font-semibold">
+                    <li class="flex text-gray-400 items-center gap-2.5">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#FAEBD7] border border-gray-300"></span>
+                        Célula livre
+                    </li>
+                    <li class="flex text-gray-400 items-center gap-2.5">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#2C3E50]"></span>
+                        Parede
+                    </li>
+                    <li class="flex text-gray-400 items-center gap-2.5">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#8B4513] relative">
+                            <span class="absolute top-0 right-0 text-[8px] text-white/70 font-bold"></span>
+                        </span>
+                        Terreno pesado (custo 2)
+                    </li>
+                    <li class="flex text-gray-400 items-center gap-2.5">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-blue-300/70"></span>
+                        Explorado
+                    </li>
+                    <li class="flex text-gray-400 items-center gap-2.5">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#F1C40F]"></span>
+                        Caminho final
+                    </li>
+                </ul>
+            </div>
+
+            <hr class="border-amber-100">
+
+            <!-- Estatísticas -->
+            <div class="flex flex-col gap-1.5">
+                <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Estatísticas</label>
+                <div class="bg-fundo rounded-xl p-3 flex flex-col gap-1.5 text-sm font-semibold">
+                    <div class="stat-row ">
+                        <span class="text-sm text-orange-600">Nós visitados</span>
+                        <span id="stat-visitados" class="text-parede text-orange-600">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="text-sm text-orange-600">Tamanho do caminho</span>
+                        <span id="stat-caminho" class="text-parede text-orange-600">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="text-sm text-orange-600">Tempo execução</span>
+                        <span id="stat-tempo" class="text-parede text-orange-600">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <footer class="flex-shrink-0 px-5 py-3 border-t border-amber-100 flex justify-between items-center">
+            <span class="text-xs text-gray-500 font-semibold">v1.0</span>
+            <div class="flex gap-1.5">
+                <button id="toggle-sound" onclick="toggleSound()" title="Som" class="icon-btn w-8 h-8 rounded-lg bg-amber-100 hover:bg-amber-200 text-base
+                               flex items-center justify-center transition-colors
+                               focus:outline-none focus:ring-2 focus:ring-queijo">🔊</button>
+                <button id="toggle-github" onclick="toggleGitHub()" title="GitHub"
+                        class="icon-btn w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-base
+                               flex items-center justify-center transition-colors
+                               focus:outline-none focus:ring-2 focus:ring-gray-400">🐙</button>
+            </div>
+        </footer>
+    </aside>
+
+    <!-- Modular Scripts -->
+    <script src="{{ url_for('static', filename='maze.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
