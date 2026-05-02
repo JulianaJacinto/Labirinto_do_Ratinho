@@ -220,20 +220,6 @@ Edite `static/labirintos.json`:
 - `0` = célula livre (pode passar)
 - `1` = parede (bloqueado)
 
-### Mudar Cores
-
-Em `static/main.js`, seção **Tailwind Configuration**:
-
-```javascript
-colors: {
-    queijo:  '#FFB830',  // Amarelo queijo
-    laranja: '#FF8C42',  // Laranja dos botões
-    fundo:   '#FFF3E0',  // Fundo claro
-    parede:  '#2C3E50',  // Cinza das paredes
-    // Adicione suas cores aqui!
-}
-```
-
 ---
 
 ## 🐛 Solução de Problemas
@@ -328,31 +314,6 @@ Tem sugestões ou encontrou um bug?
 
 ---
 
-## 📞 Suporte
-
-Se tiver dúvidas:
-
-1. ✅ Leia a seção **"Como Usar"** deste README
-2. ✅ Confira a seção **"Solução de Problemas"**
-3. ✅ Abra uma Issue no repositório
-4. ✅ Verifique o console do navegador (F12) para erros
-
----
-
-## ✅ Checklist de Funcionalidades
-
-- [x] Interface gráfica com seleção de algoritmos
-- [x] 9 métodos de busca implementados
-- [x] Seleção interativa de estado inicial e objetivo
-- [x] Visualização gráfica do caminho
-- [x] Estatísticas de execução
-- [x] Presets de labirintos
-- [x] Efeitos sonoros
-- [x] Design responsivo
-- [x] Documentação completa
-
----
-
-**Desenvolvido com ❤️ para aprender Inteligência Artificial**
+**Desenvolvido com ❤️ e dedicação para aprender Inteligência Artificial**
 
 *Última atualização: 2026-05-02*
