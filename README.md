@@ -1,6 +1,6 @@
 # 🐭 Labirinto do Ratinho - Busca em Inteligência Artificial
 
-Um projeto interativo que implementa **9 algoritmos de busca em árvore** para resolver labirintos, desenvolvido com **Python (Flask)** e **JavaScript (Tailwind CSS)**.
+Um projeto interativo diciplinar que implementa **9 algoritmos de busca em árvore** para resolver com a temática de jogos de labirintos.
 
 ---
 
@@ -292,28 +292,4 @@ A busca em árvore é um método para explorar todas as possibilidades de soluç
 
 ---
 
-## 👥 Autor
-
-**Juliana Jacinto**
-- GitHub: [@JulianaJacinto](https://github.com/JulianaJacinto)
-- Projeto desenvolvido como trabalho educacional em Inteligência Artificial
-
----
-
-## 📝 Licença
-
-Este projeto é disponibilizado para fins educacionais e de aprendizado.
-
----
-
-## 🤝 Contribuições
-
-Tem sugestões ou encontrou um bug? 
-- Abra uma **Issue** no GitHub
-- Faça um **Pull Request** com melhorias
-
----
-
 **Desenvolvido com ❤️ e dedicação para aprender Inteligência Artificial**
-
-*Última atualização: 2026-05-02*
