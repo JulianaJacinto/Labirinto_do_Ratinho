@@ -1,0 +1,54 @@
+# ════════════════════════════════════════════════════════════════
+# Labirinto do Ratinho - Dependências do Projeto
+# ════════════════════════════════════════════════════════════════
+# 
+# Este arquivo lista todas as dependências necessárias para rodar
+# o projeto em ambiente de desenvolvimento e produção.
+#
+# INSTALAÇÃO:
+#   pip install -r requirements.txt
+#
+# ════════════════════════════════════════════════════════════════
+
+# ── DEPENDÊNCIAS PRINCIPAIS ─────────────────────────────────────
+# Flask é o framework web usado para criar a API REST
+# e servir os arquivos estáticos (HTML, CSS, JS)
+Flask==2.3.3
+
+# Werkzeug é a biblioteca WSGI usada por Flask internamente
+# para gerenciar requisições HTTP e geradores de aplicações
+Werkzeug==2.3.7
+
+# ── DEPENDÊNCIAS DE AMBIENTE ────────────────────────────────────
+# python-dotenv permite carregar variáveis de ambiente de um arquivo .env
+# Útil para manter senhas, chaves de API e configurações fora do código
+python-dotenv==1.0.0
+
+# ── DEPENDÊNCIAS DE PRODUÇÃO ────────────────────────────────────
+# Gunicorn é um servidor WSGI de produção para rodar aplicações Flask
+# em ambientes reais (Heroku, VPS, Docker, etc)
+# NÃO é necessário em desenvolvimento com Flask debug=True
+gunicorn==21.2.0
+
+# ════════════════════════════════════════════════════════════════
+# 
+# NOTAS IMPORTANTES:
+#
+# 1. Python Built-ins (NÃO PRECISAM SER INSTALADOS):
+#    - collections (deque para estruturas de dados)
+#    - heapq (heap queue para algoritmos de busca)
+#
+# 2. DESENVOLVIMENTO vs PRODUÇÃO:
+#    - Em desenvolvimento: use "python app.py"
+#    - Em produção: use "gunicorn app:app"
+#
+# 3. CRIAR ARQUIVO .env (opcional):
+#    - FLASK_ENV=development
+#    - FLASK_DEBUG=True
+#    - SECRET_KEY=sua_chave_secreta_aqui
+#
+# 4. VERSÕES:
+#    - Todas as versões foram testadas e são estáveis
+#    - Para atualizar: pip install --upgrade -r requirements.txt
+#
+# ════════════════════════════════════════════════════════════════
