@@ -3,27 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Ratinho e o Algoritmo</title>
+    <title>O Ratinho e o Labirinto</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Delius+Swash+Caps&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
 
-<body class="h-screen overflow-hidden bg-fundo flex" style="font-family: 'Nunito', sans-serif;">
+<body class="h-screen overflow-hidden flex" style="font-family: 'Nunito', sans-serif;">
 
     <!-- ── PAINEL ESQUERDO ─────────────────────────────────── -->
-    <aside class="w-80 flex-shrink-0 bg-white flex flex-col border-r-2 border-amber-200 rounded-tr-3xl rounded-br-3xl">
-
+    <aside class="w-80 flex-shrink-0 bg-white flex flex-col rounded-tr-3xl rounded-br-3xl">
+        
         <!-- Cabeçalho -->
         <header class="bg-queijo px-6 pt-6 pb-5 flex flex-col items-center gap-3 relative overflow-hidden flex-shrink-0 rounded-tr-3xl">
-            <div class="absolute inset-0 opacity-20 pointer-events-none"
-                 style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 18px 18px;"></div>
-            <div class="z-10 text-center">
                 <h1 class="text-white text-3xl leading-tight drop-shadow" style="font-family: 'Fredoka One', cursive;">
                     Busca em IA
                 </h1>
@@ -36,12 +33,13 @@
 
             <!-- Algoritmo -->
             <div class="flex flex-col gap-1.5">
-                <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Algoritmo</label>
+                <label for="metodo" class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Algoritmo</label>
                 <div class="relative">
-                    <select id="metodo" class="w-full appearance-none bg-orange-50 border-2 border-queijo/70 
+                    <select id="metodo" class="w-full appearance-none bg-orange-50/50 border-2 border-queijo/70 
                                         text-parede font-semibold text-sm rounded-xl
                                         px-4 py-2.5 pr-9 cursor-pointer
-                                        focus:outline-none focus:ring-2 focus:ring-queijo/40">
+                                        focus:outline-none focus:ring-2 focus:ring-queijo/40"
+                            aria-describedby="algorithm-desc">
                         <option value="amplitude">Amplitude (BFS)</option>
                         <option value="profundidade">Profundidade (DFS)</option>
                         <option value="prof_limitada">Prof. Limitada</option>
@@ -53,25 +51,26 @@
                         <option value="aia_estrela">AIA*</option>
                     </select>
                 </div>
-                <p id="algorithm-desc" class="text-xs text-gray-400 italic mb-1">Descrição do algoritmo</p>
+                <p id="algorithm-desc" class="text-xs text-gray-400 italic mb-1" role="status" aria-live="polite">Descrição do algoritmo</p>
 
                 <hr class="border-amber-100">
 
                 <div class="flex flex-col gap-1.5 mt-4">
-                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Preset do Labirinto</label>
+                    <label for="preset-select" class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Preset do Labirinto</label>
                     <div class="relative">
-                        <select id="preset-select" class="w-full appearance-none bg-orange-50 border-2 border-queijo/70 
+                        <select id="preset-select" class="w-full appearance-none bg-orange-50/50 border-2 border-queijo/70 
                                             text-parede font-semibold text-sm rounded-xl
                                             px-4 py-2.5 pr-9 cursor-pointer
-                                            focus:outline-none focus:ring-2 focus:ring-queijo/40">
-                            <option value="">Carregando presets...</option>
+                                            focus:outline-none focus:ring-2 focus:ring-queijo/40"
+                                aria-describedby="preset-desc preset-expected">
+                            <option value="" disabled selected>Carregando presets...</option>
                         </select>
                         <svg class="w-4 h-4 text-queijo/70 absolute top-1/2 right-3 -translate-y-1/2 pointer-events-none" xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         </svg>
                     </div>
-                    <p id="preset-desc" class="text-xs text-gray-400 italic mt-1">Escolha um preset para testar diferentes labirintos.</p>
-                    <p id="preset-expected" class="text-xs text-gray-400 italic mt-1 hidden"></p>
+                    <p id="preset-desc" class="text-xs text-gray-400 italic mt-1" role="status" aria-live="polite">Escolha um preset para testar diferentes labirintos.</p>
+                    <p id="preset-expected" class="text-xs text-gray-400 italic mt-1 hidden" role="status" aria-live="polite"></p>
                 </div>
             </div>
 
@@ -81,31 +80,37 @@
             <div class="grid grid-cols-2 gap-2">
                 <!-- Início -->
                 <div class="flex flex-col gap-1">
-                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Início (Rato) 🐭</label>
+                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                        Início (Rato)
+                    </label>
                     <div class="flex gap-1">
-                        <button id="btn-set-start" onclick="startSelectionMode('start')"
+                        <button id="btn-set-start" type="button" onclick="startSelectionMode('start')"
                                 class="flex-1 py-2 px-2 rounded-lg text-xs font-bold
                                        bg-blue-100 text-blue-700 hover:bg-blue-200
-                                       transition-all focus:outline-none">
-                            Definir
+                                       transition-all focus:outline-none"
+                                aria-pressed="false" aria-label="Definir posição inicial do rato">
+                            Definir 
                         </button>
                         <div class="flex-1 bg-fundo rounded-lg flex items-center justify-center">
-                            <span id="pos-start" class="text-xs font-bold text-parede">[0, 0]</span>
+                            <span id="pos-start" class="text-xs font-bold text-parede" role="status" aria-live="polite">[0, 0]</span>
                         </div>
                     </div>
                 </div>
                 <!-- Fim -->
                 <div class="flex flex-col gap-1">
-                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider">Fim (Queijo) 🧀</label>
+                    <label class="label-section text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                        Fim (Queijo)
+                    </label>
                     <div class="flex gap-1">
-                        <button id="btn-set-end" onclick="startSelectionMode('end')"
+                        <button id="btn-set-end" type="button" onclick="startSelectionMode('end')"
                                 class="flex-1 py-2 px-2 rounded-lg text-xs font-bold
                                        bg-amber-100 text-amber-700 hover:bg-amber-200
-                                       transition-all focus:outline-none">
+                                       transition-all focus:outline-none"
+                                aria-pressed="false" aria-label="Definir posição final do queijo">
                             Definir
                         </button>
                         <div class="flex-1 bg-fundo rounded-lg flex items-center justify-center">
-                            <span id="pos-end" class="text-xs font-bold text-parede">[9, 9]</span>
+                            <span id="pos-end" class="text-xs font-bold text-parede" role="status" aria-live="polite">[9, 9]</span>
                         </div>
                     </div>
                 </div>
@@ -118,21 +123,23 @@
 
             <!-- Ações -->
             <div class="flex flex-col gap-2">
-                <button onclick="solveMaze()"
-                        class="w-full py-3 rounded-xl text-white text-base
+                <button id="btn-solve" type="button" onclick="solveMaze()"
+                        class="w-full py-3 rounded-xl text-white text-base items-center gap-2
                                bg-laranja shadow-[0_4px_0_#c45e1a]
                                hover:brightness-105
                                active:translate-y-1 active:shadow-none
                                transition-all focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        style="font-family: 'Fredoka One', cursive;">
+                        style="font-family: 'Fredoka One', cursive;"
+                        aria-label="Executar busca no labirinto">
                     Ache o Queijo!
                 </button>
-                <button onclick="clearMazeVisualization()"
-                        class="w-full py-2.5 rounded-xl text-sm font-bold
+                <button id="btn-clear" type="button" onclick="clearMazeVisualization()"
+                        class="w-full py-2.5 rounded-xl text-sm font-bold items-center justify-center
                                text-gray-500 bg-white border-2 border-gray-200
                                hover:bg-gray-50 active:translate-y-px
-                               transition-all focus:outline-none focus:ring-2 focus:ring-gray-300">
-                    Limpar
+                               transition-all focus:outline-none focus:ring-2 focus:ring-gray-300"
+                        aria-label="Limpar visualização do labirinto">
+                    Limpar Visualização
                 </button>
             </div>
         </div>
@@ -140,30 +147,26 @@
         <!-- Rodapé -->
         <footer class="flex-shrink-0 px-5 py-3 border-t border-amber-100 flex justify-between items-center">
             <span class="text-xs text-gray-500 font-semibold">v1.0</span>
-            <button id="toggle-final" onclick="toggleFinal()" title="Cena final"
-                    class="icon-btn w-8 h-8 rounded-lg bg-amber-100 hover:bg-amber-200 text-base
-                                flex items-center justify-center transition-colors
-                                focus:outline-none focus:ring-2 focus:ring-queijo">⭐</button>
         </footer>
     </aside>
 
     <!-- ── LABIRINTO (centro) ───────────────────────────────── -->
-    <main class="flex-1 min-w-0 flex items-center justify-center overflow-auto bg-fundo p-5">
+    <main class="flex-1 min-w-0 flex items-center justify-center overflow-auto p-5">
         <div id="labirinto"></div>
     </main>
 
     <!-- ── PAINEL DIREITO ──────────────────────────────────── -->
-    <aside class="w-80 flex-shrink-0 bg-white flex flex-col border-l-2 border-amber-200 rounded-tl-3xl rounded-bl-3xl">
+    <aside class="w-80 flex-shrink-0 bg-white flex flex-col rounded-tl-3xl rounded-bl-3xl">
 
         <!-- Conteúdo com scroll -->
         <div class="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5 min-h-0">
 
             <!-- Legenda -->
             <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Legenda</label>
+                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Legenda:</label>
                 <ul class="flex flex-col gap-2 text-sm text-gray-600 font-semibold">
                     <li class="flex text-gray-400 items-center gap-2.5">
-                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#FAEBD7] border border-gray-300"></span>
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#fffcf4] border border-gray-300"></span>
                         Célula livre
                     </li>
                     <li class="flex text-gray-400 items-center gap-2.5">
@@ -171,10 +174,10 @@
                         Parede
                     </li>
                     <li class="flex text-gray-400 items-center gap-2.5">
-                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#8B4513] relative">
+                        <span class="w-5 h-5 flex-shrink-0 rounded-md bg-[#f5a46b] relative">
                             <span class="absolute top-0 right-0 text-[8px] text-white/70 font-bold"></span>
                         </span>
-                        Terreno pesado (custo 2)
+                        Armadilha (custo 2)
                     </li>
                     <li class="flex text-gray-400 items-center gap-2.5">
                         <span class="w-5 h-5 flex-shrink-0 rounded-md bg-blue-300/70"></span>
@@ -213,13 +216,13 @@
         <footer class="flex-shrink-0 px-5 py-3 border-t border-amber-100 flex justify-between items-center">
             <span class="text-xs text-gray-500 font-semibold">v1.0</span>
             <div class="flex gap-1.5">
-                <button id="toggle-sound" onclick="toggleSound()" title="Som" class="icon-btn w-8 h-8 rounded-lg bg-amber-100 hover:bg-amber-200 text-base
-                               flex items-center justify-center transition-colors
-                               focus:outline-none focus:ring-2 focus:ring-queijo">🔊</button>
-                <button id="toggle-github" onclick="toggleGitHub()" title="GitHub"
+                <button id="toggle-github" type="button" onclick="toggleGitHub()" title="GitHub"
                         class="icon-btn w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-base
                                flex items-center justify-center transition-colors
-                               focus:outline-none focus:ring-2 focus:ring-gray-400">🐙</button>
+                               focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        aria-label="Abrir GitHub em nova aba">
+                        <i class="fa-brands fa-github"></i>
+                </button>
             </div>
         </footer>
     </aside>

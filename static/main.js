@@ -47,88 +47,85 @@ document.addEventListener('DOMContentLoaded', async () => {
 const algorithmMetadata = {
     'amplitude': {
         description: 'BFS: Explora nó por nó, encontra o caminho mais curto',
-        cheeseType: 'emoji',
-        cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Clássico',
-        cheeseImage: '/static/assets/queijo.png',
-        cheeseClass: 'cheese-classic'
+        cheeseImage: './static/assets/queijos/queijo_3.png',
+        cheeseType:  'image', 
+        cheeseEmoji: '🧀',      
+        cheeseName:  'queijo BFS',    
+        cheeseClass: '',  
     },
     'profundidade': {
         description: 'DFS: Explora profundo, usa menos memória',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_1.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo de Cabra',
-        cheeseImage: null,
-        cheeseClass: 'cheese-goat'
+        cheeseName:  'queijo DFS',
+        cheeseClass: '',
     },
     'prof_limitada': {
         description: 'DFS com limite de profundidade',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_2.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Brie',
-        cheeseImage: null,
-        cheeseClass: 'cheese-brie'
+        cheeseName:  'queijo DFS Limitado',
+        cheeseClass: '',
     },
     'aprof_iterativo': {
         description: 'Combina BFS e DFS, encontra caminho ótimo',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_4.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Suíço',
-        cheeseImage: null,
-        cheeseClass: 'cheese-swiss'
+        cheeseName:  'queijo IDDFS',
+        cheeseClass: '',
     },
     'bidirecional': {
         description: 'Busca de dois lados simultaneamente',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_5.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Azul',
-        cheeseImage: null,
-        cheeseClass: 'cheese-blue'
+        cheeseName:  'queijo Bidirecional',
+        cheeseClass: '',
     },
     'custo_uniforme': {
         description: 'Expande por menor custo, garante otimalidade',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_1.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Cheddar',
-        cheeseImage: null,
-        cheeseClass: 'cheese-cheddar'
+        cheeseName:  'queijo Custo Uniforme',
+        cheeseClass: '',
     },
     'greddy': {
         description: 'Guloso: rápido mas não garante caminho ótimo',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_2.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Havarti',
-        cheeseImage: null,
-        cheeseClass: 'cheese-havarti'
+        cheeseName:  'queijo Guloso',
+        cheeseClass: '',
     },
     'a_estrela': {
         description: 'A*: Rápido e ótimo, usa heurística',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_4.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Gouda',
-        cheeseImage: null,
-        cheeseClass: 'cheese-gouda'
+        cheeseName:  'queijo A*',
+        cheeseClass: '',
     },
     'aia_estrela': {
         description: 'IDA*: Combina iterativo com A*',
-        cheeseType: 'emoji',
+        cheeseImage: './static/assets/queijos/queijo_5.png',
+        cheeseType:  'image',
         cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Parmesão',
-        cheeseImage: null,
-        cheeseClass: 'cheese-parmesan'
+        cheeseName:  'queijo IDA*',
+        cheeseClass: '',
     }
 };
 
 function getAlgorithmMetadata(metodo) {
     return algorithmMetadata[metodo] || {
         description: 'Descrição não disponível',
-        cheeseType: 'emoji',
-        cheeseEmoji: '🧀',
-        cheeseName: 'Queijo Padrão',
         cheeseImage: null,
-        cheeseClass: ''
     };
 }
+
 
 function getCurrentCheeseRepresentation() {
     const metodo = document.getElementById('metodo')?.value;
@@ -210,7 +207,13 @@ function playSound(tipo) {
 function toggleSound() {
     uiState.soundEnabled = !uiState.soundEnabled;
     const botao = document.getElementById('toggle-sound');
-    botao.textContent = uiState.soundEnabled ? '🔊' : '🔇';
+
+    if (!botao) return;
+
+    botao.setAttribute('aria-pressed', uiState.soundEnabled.toString());
+    botao.innerHTML = uiState.soundEnabled ?
+        '<i class="fa-solid fa-volume"></i>' :
+        '<i class="fa-solid fa-volume-xmark"></i>';
 }
 
 // ── Update Algorithm Description ───────────────────────────
@@ -326,7 +329,7 @@ function formatAlgorithmLabel(key) {
 
 // ── Navigation: GitHub ────────────────────────────────────
 function toggleGitHub() {
-    window.open('https://github.com/JulianaJacinto', '_blank');
+    window.open('https://github.com/JulianaJacinto/Labirinto_do_Ratinho', '_blank');
 }
 
 // ── Navigation: Final Scene ───────────────────────────────

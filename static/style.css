@@ -1,16 +1,19 @@
-:root { --tamanho-celula: 48px; }
+:root { --tamanho-celula: 55px; }
 
-body { font-family: 'Nunito', sans-serif; }
+body { 
+    font-family: 'Nunito', sans-serif; 
+    background-image: url('assets/fundo_labirinto.png');
+    background-size: cover;
+    background-position: center;
+}
 
 /* ── Labirinto ─────────────────────────────────────────── */
 #labirinto {
     display: grid;
     gap: 2px;
-    background-color: #2C3E50;
+    background-color: #50322c;
     border-radius: 12px;
     padding: 6px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-/* grid-template-columns é definido pelo script.js */
 }
 
 .celula {
@@ -29,38 +32,48 @@ body { font-family: 'Nunito', sans-serif; }
     border-radius: 4px; 
 }
 
-.terreno-pesado {
-    background-color: #8B4513; /* Saddle brown for heavy terrain */
-    border-radius: 4px;
-    position: relative;
+.ratoeira {
+    background-image: url('assets/ratoeira.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #f5a46b; /* fallback */
+    color: transparent;
 }
 
-.terreno-pesado::after {
-    content: "2";
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: bold;
+.rato-inicio {
+    background-image: url('assets/ratinho_inicio.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
 }
 
-.rato {
-    font-size: 32px;
-    line-height: 1;
-    transition: all 0.2s ease;
+.rato-correndo {
+    background-image: url('assets/ratinho_correndo.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
 }
 
-.queijo {
-    font-size: 32px;
-    line-height: 1;
-    transition: all 0.2s ease;
-    background-image: none;
-    color: inherit;
+.rato-chegada {
+    background-image: url('assets/ratinho_chegada.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
+}
+
+.celula.queijo.cheese-image {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: transparent;
 }
 
 .visitado {
-    background-color: rgba(52, 152, 219, 0.38);
+    background-color: #F1C40F;
     animation: pulse-visited 0.4s ease;
 }
 
@@ -69,20 +82,8 @@ body { font-family: 'Nunito', sans-serif; }
     animation: flash-path 0.3s ease;
     }
 
-        /* Para usar imagens em vez de emojis */
-.celula.rato {
-    background-image: url('assets/rato.png');
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: transparent; 
-}
-
-.celula.queijo.cheese-image {
-    background-size: 80%;
-    background-repeat: no-repeat;
-    background-position: center;
-    color: transparent;
+.celula.rato-chegada {
+    background-image: url('assets/ratinho_chegada.png') !important;
 }
 
 @keyframes pulse-visited {

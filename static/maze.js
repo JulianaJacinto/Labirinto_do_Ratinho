@@ -2,20 +2,20 @@
 // ── Maze State ─────────────────────────────────────────────
 const mazeState = {
     mapa: [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
     ],
     inicio: [0, 0],
-    fim: [9, 9],
-    animationSpeed: 200,
+    fim: [9, 10],
+    animationSpeed: 200, // milisegundos
     selectionMode: null, // 'start', 'end', ou null
 };
 
@@ -34,7 +34,7 @@ function getSelectionMode()         { return mazeState.selectionMode; }
 // ── Helpers de célula ──────────────────────────────────────
 function isCellWall(value)      { return value === 1; }
 function isCellFree(value)      { return value === 0; }
-function isCellHeavy(value)     { return value === 2; }   // terreno pesado
+function isCellHeavy(value)     { return value === 2; }   // armadilha (ratoeira)
 function isCellPassable(value)  { return value !== 1; }   // 0 ou 2
 
 // ── Create Maze Grid ───────────────────────────────────────
@@ -66,11 +66,10 @@ function createMazeGrid() {
                 div.classList.add('parede');
             } else {
                 if (isCellHeavy(cellValue)) {
-                    div.classList.add('terreno-pesado'); // estilize no CSS conforme desejado
-                    div.title = 'Terreno pesado (custo 2)';
+                    div.classList.add('ratoeira');
                 }
                 if (r === mazeState.inicio[0] && c === mazeState.inicio[1]) {
-                    div.classList.add('rato');
+                    div.classList.add('rato-inicio');
                 }
                 if (r === mazeState.fim[0] && c === mazeState.fim[1]) {
                     div.classList.add('queijo');
@@ -90,12 +89,15 @@ function handleCellClick(r, c) {
     if (!isCellPassable(mazeState.mapa[r][c])) return;
 
     if (mazeState.selectionMode === 'start') {
-        document.querySelector('.rato')?.classList.remove('rato');
+        document.querySelector('.rato-inicio')?.classList.remove('rato-inicio');
+        document.querySelector('.rato-correndo')?.classList.remove('rato-correndo');
+        document.querySelector('.rato-chegada')?.classList.remove('rato-chegada');
         setStartPosition(r, c);
         createMazeGrid();
         finishSelectionMode();
     } else if (mazeState.selectionMode === 'end') {
         document.querySelector('.queijo')?.classList.remove('queijo');
+        document.querySelector('.cheese-image')?.classList.remove('cheese-image');
         setEndPosition(r, c);
         createMazeGrid();
         finishSelectionMode();
@@ -131,9 +133,13 @@ function startSelectionMode(mode) {
     if (mode === 'start') {
         btnStart?.classList.add('ring-2', 'ring-yellow-400');
         btnEnd?.classList.remove('ring-2', 'ring-yellow-400');
+        btnStart?.setAttribute('aria-pressed', 'true');
+        btnEnd?.setAttribute('aria-pressed', 'false');
     } else if (mode === 'end') {
         btnEnd?.classList.add('ring-2', 'ring-yellow-400');
         btnStart?.classList.remove('ring-2', 'ring-yellow-400');
+        btnEnd?.setAttribute('aria-pressed', 'true');
+        btnStart?.setAttribute('aria-pressed', 'false');
     }
 
     createMazeGrid();
@@ -141,8 +147,12 @@ function startSelectionMode(mode) {
 
 function finishSelectionMode() {
     setSelectionMode(null);
-    document.getElementById('btn-set-start')?.classList.remove('ring-2', 'ring-yellow-400');
-    document.getElementById('btn-set-end')?.classList.remove('ring-2', 'ring-yellow-400');
+    const btnStart = document.getElementById('btn-set-start');
+    const btnEnd   = document.getElementById('btn-set-end');
+    btnStart?.classList.remove('ring-2', 'ring-yellow-400');
+    btnEnd?.classList.remove('ring-2', 'ring-yellow-400');
+    btnStart?.setAttribute('aria-pressed', 'false');
+    btnEnd?.setAttribute('aria-pressed', 'false');
     createMazeGrid();
 }
 
@@ -166,10 +176,12 @@ function resetStats() {
 // ── Solve Maze ─────────────────────────────────────────────
 async function solveMaze() {
     const metodo = document.getElementById('metodo').value;
-    const button = event.target;
+    const button = document.getElementById('btn-solve');
 
-    button.disabled    = true;
-    button.style.opacity = '0.5';
+    if (button) {
+        button.disabled = true;
+        button.style.opacity = '0.5';
+    }
 
     clearMazeVisualization();
 
@@ -228,11 +240,12 @@ async function solveMaze() {
 async function animatePath(caminho) {
     if (!caminho || caminho.length === 0) return;
 
-    const inicialId    = `cel-${mazeState.inicio[0]}-${mazeState.inicio[1]}`;
-    const celulaInicial = document.getElementById(inicialId);
+    // Remove o rato da posição inicial visualmente
+    const [startR, startC] = mazeState.inicio;
+    const celulaInicial = document.getElementById(`cel-${startR}-${startC}`);
     if (celulaInicial) {
         celulaInicial.textContent = '';
-        celulaInicial.classList.remove('rato');
+        celulaInicial.classList.remove('rato-inicio');
     }
 
     for (let i = 0; i < caminho.length; i++) {
@@ -240,34 +253,34 @@ async function animatePath(caminho) {
         const celula = document.getElementById(`cel-${linha}-${coluna}`);
         if (!celula) continue;
 
-        celula.textContent = '🐭';
-        celula.classList.add('rato');
+        celula.classList.add('rato-correndo');
 
         await new Promise(resolve => setTimeout(resolve, mazeState.animationSpeed));
 
-        if (i > 0 && !(linha === mazeState.fim[0] && coluna === mazeState.fim[1])) {
-            const [lA, cA] = caminho[i - 1];
-            const celulaAnterior = document.getElementById(`cel-${lA}-${cA}`);
-            if (celulaAnterior) {
-                celulaAnterior.textContent = '';
-                celulaAnterior.classList.remove('rato');
-                celulaAnterior.classList.add('visitado');
-            }
+        // Se não for a última célula, remove a classe de "correndo" para deixar o rastro
+        if (i < caminho.length - 1) {
+            celula.classList.remove('rato-correndo');
+            celula.classList.add('visitado');
         }
     }
 
-    const celulaFim = document.getElementById(`cel-${mazeState.fim[0]}-${mazeState.fim[1]}`);
+    // Finalização no queijo
+    const [fimR, fimC] = mazeState.fim;
+    const celulaFim = document.getElementById(`cel-${fimR}-${fimC}`);
     if (celulaFim) {
-        renderCheeseCell(celulaFim, true);
-        celulaFim.classList.add('caminho-final');
-        playSound('vitoria');
+        celulaFim.classList.remove('rato-correndo', 'queijo', 'cheese-image');
+        celulaFim.style.backgroundImage = '';
+        celulaFim.textContent = '';
+        celulaFim.classList.add('rato-chegada', 'caminho-final');
+        
+        if (typeof playSound === 'function') playSound('vitoria');
     }
 }
 
 // ── Clear Maze Visualization ───────────────────────────────
 function clearMazeVisualization() {
     document.querySelectorAll('.celula').forEach(celula => {
-        celula.classList.remove('visitado', 'caminho-final');
+        celula.classList.remove('visitado', 'caminho-final', 'rato-inicio', 'rato-correndo', 'rato-chegada');
         celula.textContent = '';
     });
     createMazeGrid();

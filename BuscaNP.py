@@ -12,8 +12,10 @@ class BuscaNP(object):
         for dx, dy in movimentos:
             nx_pos, ny_pos = x + dx, y + dy
             if 0 <= nx_pos < nx and 0 <= ny_pos < ny:
-                if mapa[nx_pos][ny_pos] == 0:
-                    f.append([nx_pos, ny_pos])
+                cell_value = mapa[nx_pos][ny_pos]
+                if cell_value != 1:  # not wall
+                    cost = 1 if cell_value == 0 else 2  # 2 for trap
+                    f.append([[nx_pos, ny_pos], cost])
         return f[::-1]
 
         
@@ -51,7 +53,8 @@ class BuscaNP(object):
         
         while fila:
             atual = fila.popleft()
-            for novo in self.sucessores_grid(atual.estado, nx, ny, mapa):
+            for item in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                novo, _ = item  # ignore cost for BFS
                 t_novo = tuple(novo)
                 if t_novo not in visitado:
                     filho = Node(atual, t_novo, atual.cost + 1, None, None)
@@ -72,7 +75,8 @@ class BuscaNP(object):
         
         while pilha:
             atual = pilha.pop()
-            for novo in self.sucessores_grid(atual.estado, nx, ny, mapa):
+            for item in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                novo, _ = item
                 t_novo = tuple(novo)
                 if t_novo not in visitado:
                     filho = Node(atual, t_novo, atual.cost + 1, None, None)
@@ -94,7 +98,8 @@ class BuscaNP(object):
         while pilha:
             atual = pilha.pop()
             if atual.cost < lim:
-                for novo in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                for item in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                    novo, _ = item
                     t_novo = tuple(novo)
                     if t_novo not in visitado:
                         filho = Node(atual, t_novo, atual.cost + 1, None, None)
@@ -129,7 +134,8 @@ class BuscaNP(object):
             # Expande um nível da origem
             for _ in range(len(fila1)):
                 atual = fila1.popleft()
-                for novo in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                for item in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                    novo, _ = item
                     t_novo = tuple(novo)
                     if t_novo not in visitado1:
                         filho = Node(atual, t_novo, atual.cost + 1, None, None)
@@ -141,7 +147,8 @@ class BuscaNP(object):
             # Expande um nível do objetivo
             for _ in range(len(fila2)):
                 atual = fila2.popleft()
-                for novo in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                for item in self.sucessores_grid(atual.estado, nx, ny, mapa):
+                    novo, _ = item
                     t_novo = tuple(novo)
                     if t_novo not in visitado2:
                         filho = Node(atual, t_novo, atual.cost + 1, None, None)
@@ -176,10 +183,11 @@ class BuscaNP(object):
             if atual_estado == t_fim:
                 return self.exibirCaminho(atual_node)
             
-            for novo in self.sucessores_grid(atual_estado, nx, ny, mapa):
+            for item in self.sucessores_grid(atual_estado, nx, ny, mapa):
+                novo, move_cost = item
                 t_novo = tuple(novo)
                 if t_novo not in visitado:
-                    novo_custo = custo + 1
+                    novo_custo = custo + move_cost
                     filho = Node(atual_node, t_novo, novo_custo, None, None)
                     visitado[t_novo] = filho
                     contador += 1
@@ -205,7 +213,8 @@ class BuscaNP(object):
             if atual_estado == t_fim:
                 return self.exibirCaminho(atual_node)
             
-            for novo in self.sucessores_grid(atual_estado, nx, ny, mapa):
+            for item in self.sucessores_grid(atual_estado, nx, ny, mapa):
+                novo, _ = item
                 t_novo = tuple(novo)
                 if t_novo not in visitado:
                     h_novo = self.heuristica(t_novo, t_fim)
@@ -238,9 +247,10 @@ class BuscaNP(object):
             if atual_estado == t_fim:
                 return self.exibirCaminho(atual_node)
             
-            for novo in self.sucessores_grid(atual_estado, nx, ny, mapa):
+            for item in self.sucessores_grid(atual_estado, nx, ny, mapa):
+                novo, move_cost = item
                 t_novo = tuple(novo)
-                g_novo = atual_node.cost + 1
+                g_novo = atual_node.cost + move_cost
                 
                 if t_novo not in visitado or g_novo < melhor_g.get(t_novo, float('inf')):
                     visitado[t_novo] = None
@@ -275,12 +285,13 @@ class BuscaNP(object):
             visitado_local.add(estado_atual)
             min_limite = float('inf')
             
-            for novo in self.sucessores_grid(estado_atual, nx, ny, mapa):
+            for item in self.sucessores_grid(estado_atual, nx, ny, mapa):
+                novo, move_cost = item
                 t_novo = tuple(novo)
                 
                 # Pula nós já visitados nesta iteração (prevenção de ciclos)
                 if t_novo not in visitado_local:
-                    g_novo = g + 1
+                    g_novo = g + move_cost
                     
                     filho = Node(pai_node, t_novo, g_novo, None, None)
                     proxima_f, resultado = busca_profundidade_a(t_novo, g_novo, limite, filho, visitado_local)
